@@ -1,0 +1,30 @@
+name: Build Chishti Bro Neon Racer
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install pygame pyttsx3 pyinstaller
+      - name: Check Python syntax
+        run: python -m py_compile neon_racer.py
+      - name: Build EXE
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name Chishti-Bro-Neon-Racer --collect-all pygame --collect-all pyttsx3 neon_racer.py
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: Chishti-Bro-Neon-Racer-Windows
+          path: dist/Chishti-Bro-Neon-Racer.exe
+          if-no-files-found: error
